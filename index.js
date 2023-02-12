@@ -9,17 +9,12 @@ const io = socketio(server);
 io.on("connection", (socket) => {
   console.log("a user connected " + socket.id);
 
-  socket.on("from_client", () => {
-    console.log("event coming from client " + socket.id);
+  socket.on("msg_send", (data) => {
+    console.log(data);
+    // io.emit("msg_rcvd", data); send data to all including itself
+    // socket.emit("msg_rcvd", data); sends data to only itself
+    socket.broadcast.emit("msg_rcvd", data); // sends data to all except itself
   });
-
-  setInterval(() => {
-    socket.emit("from_server");
-  }, 2000);
-
-//   setInterval(() => {
-//     socket.emit("more_event");
-//   }, 2000);
 });
 
 app.use("/", express.static(__dirname + "/public"));
